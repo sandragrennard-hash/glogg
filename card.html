@@ -18,6 +18,7 @@
   .post .stamp { width: 150px; height: 178px; }
   .line { font-size: 72px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
   .top .line { flex: 1; }
+  .from { text-align: center; }
   .msg { font-size: 70px; line-height: 1.2; margin: auto 0; }
   .msg .when { margin-top: 30px; color: var(--berry-ink); }
   .msg .osa { margin-top: 30px; font-size: 54px; color: var(--berry-ink); }
@@ -46,7 +47,7 @@
     `<div class="top"><div class="line hand">${t.to}</div>
        <div class="post">${Lingon.postmark('STOCKHOLM · 27 NOV 2026 · ', '★')}${Lingon.stamp(112, 132, 'SVERIGE')}</div></div>
      <div class="msg hand"><div>${t.msg}</div><div class="when">${t.when}</div><div class="osa">${t.osa}</div></div>
-     <div class="line hand">${t.from}</div>`;
+     <div class="line hand from">${t.from}</div>`;
   // Keep everything inside the frame's reach, with some air.
   const depth = Number(card.querySelector('.lingon').dataset.depth);
   card.style.padding = `${depth + 24}px ${depth + 30}px ${depth + 36}px`;
