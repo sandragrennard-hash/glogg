@@ -1,4 +1,6 @@
-// The personal reply page. The link is …/glogg/?g=<name>-<code> (Swedish) or …/glogg/en/?g=… (English).
+// The personal reply page. Each guest has their own copy at …/glogg/t/<name>-<code>/ (made by
+// tools/build_cards.py, with their own card as the link preview); …/glogg/?g=<name>-<code> and
+// …/glogg/en/?g=… also work.
 // Names and answers live in the Google Sheet; API is its Apps Script web app. Without API the page
 // keeps answers in this browser only (for trying the page out locally).
 const API = 'https://script.google.com/macros/s/AKfycbzq9BSsHxZs75XvONxqytS1da_rezUmx9V-U6BnQAuQjEaupzPpaZvo91zQ26lNmsfk/exec';
@@ -35,9 +37,9 @@ const T = {
   },
 };
 
-const lang = document.documentElement.lang === 'en' ? 'en' : 'sv';
-const t = T[lang];
-const slug = new URLSearchParams(location.search).get('g') || '';
+let lang = document.documentElement.lang === 'en' ? 'en' : 'sv';
+let t = T[lang];
+const slug = new URLSearchParams(location.search).get('g') || (location.pathname.match(/\/t\/([^/]+)\/?$/) || [])[1] || '';
 const code = slug.split('-').pop().toLowerCase();
 // First paint uses the name in the link; the sheet's spelling (å, ä, ö) replaces it when it arrives.
 const guess = slug.includes('-') ? slug.slice(0, slug.lastIndexOf('-')).split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('-') : '';
@@ -72,11 +74,16 @@ function render() {
         <p class="hint">${t.change}</p>` : ''}
       ` : `<p class="said hand">${t.unknown}</p>`}
     </section>
-    <footer><a class="link printed-link" href="${lang === 'en' ? '../' : 'en/'}${location.search}">▸ ${t.other}</a></footer>`;
+    <footer><a class="link printed-link" id="other" href="#">▸ ${t.other}</a></footer>`;
   drawFrame();
   app.querySelectorAll('.tick').forEach(b => b.onclick = () => answer(b.dataset.a));
   const note = document.getElementById('note');
   if (note) note.onsubmit = (e) => { e.preventDefault(); sendNote(note.querySelector('textarea').value); };
+  document.getElementById('other').onclick = (e) => {
+    e.preventDefault();
+    lang = lang === 'en' ? 'sv' : 'en'; t = T[lang]; document.documentElement.lang = lang;
+    render();
+  };
   const cal = document.getElementById('cal');
   if (cal) cal.onclick = (e) => { e.preventDefault(); calendar(); };
 }

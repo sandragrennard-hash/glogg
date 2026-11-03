@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Glöggkort</title>
 <!-- The card shown as the WhatsApp preview: a postcard back stood on end (1080×1350), so it fills a
-     phone screen's width. tools/render makes card-sv.png and card-en.png from it. -->
+     phone screen's width. tools/build_cards.py renders one per guest (?to=Name), plus card-sv/en.jpg for links without one. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=IM+Fell+English+SC&display=block" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -12,18 +12,15 @@
   html, body { margin: 0; width: 1080px; height: 1350px; overflow: hidden; background: var(--paper); }
   .card { position: relative; width: 1080px; height: 1350px; box-sizing: border-box; display: flex; flex-direction: column; }
   .card .lingon { position: absolute; inset: 0; }
-  .top { display: flex; justify-content: space-between; align-items: flex-start; }
-  .label { font-size: 30px; padding-top: 10px; }
-  .post { display: flex; align-items: flex-start; }
+  .top { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; }
+  .post { display: flex; align-items: flex-start; flex: none; }
   .post .postmark { width: 230px; height: 121px; margin: 58px -46px 0 0; transform: rotate(-9deg); position: relative; z-index: 1; }
   .post .stamp { width: 150px; height: 178px; }
-  .msg { font-size: 68px; line-height: 1.18; margin-top: 10px; }
-  .msg .hi { font-size: 120px; line-height: 1; margin-bottom: 14px; }
-  .msg .when { margin-top: 26px; color: var(--berry-ink); }
-  .msg .sign { margin-top: 22px; }
-  .divider { border-top: 1px solid var(--rule); margin: auto 0 0; height: 0; }
-  .addr .line { height: 104px; display: flex; align-items: flex-end; padding-bottom: 8px; box-sizing: border-box; font-size: 62px; }
-  .addr .line.small { font-size: 54px; color: var(--berry-ink); }
+  .line { font-size: 72px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+  .top .line { flex: 1; }
+  .msg { font-size: 70px; line-height: 1.2; margin: auto 0; }
+  .msg .when { margin-top: 30px; color: var(--berry-ink); }
+  .msg .osa { margin-top: 30px; font-size: 54px; color: var(--berry-ink); }
 </style>
 </head>
 <body>
@@ -31,23 +28,25 @@
 <script src="lingon.js"></script>
 <script>
   const T = {
-    sv: { label: 'Brevkort', hi: 'Hej!', msg: 'Välkommen på glögg efter jobbet, fredagen före första advent.',
-          when: 'Fredag 27 november', sign: 'Kram, Sandra', to: 'Till: dig ♡', osa: 'OSA senast 20 november', tap: 'tryck på kortet för att svara' },
-    en: { label: 'Postcard', hi: 'Hi!', msg: 'Come for glögg after work, the Friday before the first of Advent.',
-          when: 'Friday 27 November', sign: 'Love, Sandra', to: 'To: you ♡', osa: 'RSVP by 20 November', tap: 'tap the card to reply' },
+    sv: { to: 'Till: dig ♡', msg: 'Välkommen på glögg efter jobbet, fredagen före första advent.',
+          when: 'Fredag 27 november från 18.00', osa: 'OSA senast 20 november – tryck på kortet för att svara', from: 'Från: Sandra' },
+    en: { to: 'To: you ♡', msg: 'Come for glögg after work, the Friday before the first of Advent.',
+          when: 'Friday 27 November from 6 pm', osa: 'RSVP by 20 November – tap the card to reply', from: 'From: Sandra' },
   };
   const W = 1080, H = 1350;
   const lang = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'sv';
   const t = T[lang];
+  // ?to=Magnus addresses the card to one guest (tools/build_cards.py); without it, to "dig".
+  const to = new URLSearchParams(location.search).get('to');
+  if (to) t.to = `${lang === 'en' ? 'To' : 'Till'}: ${to.replace(/[&<>"]/g, '')}`;
   document.documentElement.lang = lang;
   const card = document.getElementById('card');
   const frame = Lingon.frame(W, H, { margin: 40, scale: 2, reach: 0.36 });
   card.innerHTML = frame +
-    `<div class="top"><div class="label printed">${t.label}</div>
+    `<div class="top"><div class="line hand">${t.to}</div>
        <div class="post">${Lingon.postmark('STOCKHOLM · 27 NOV 2026 · ', '★')}${Lingon.stamp(112, 132, 'SVERIGE')}</div></div>
-     <div class="msg hand"><div class="hi">${t.hi}</div><div>${t.msg}</div><div class="when">${t.when}</div><div class="sign">${t.sign}</div></div>
-     <div class="divider"></div>
-     <div class="addr hand"><div class="line rule">${t.to}</div><div class="line rule small">${t.osa}</div><div class="line rule small">${t.tap}</div></div>`;
+     <div class="msg hand"><div>${t.msg}</div><div class="when">${t.when}</div><div class="osa">${t.osa}</div></div>
+     <div class="line hand">${t.from}</div>`;
   // Keep everything inside the frame's reach, with some air.
   const depth = Number(card.querySelector('.lingon').dataset.depth);
   card.style.padding = `${depth + 24}px ${depth + 30}px ${depth + 36}px`;
