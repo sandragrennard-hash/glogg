@@ -47,6 +47,19 @@ dd .small { display: block; }
 .rsvp.cal { justify-content: center; margin-top: 6cqw; }
 .change { margin-top: 4cqw; color: var(--print); }
 
+/* The tick on the yes side: written in ink over 0.8 s, then the berry pops onto its tip. */
+.okmark { display: block; width: 30cqw; height: auto; margin: 0 auto 3cqw; overflow: visible; }
+.ok-stroke { fill: none; stroke: var(--ink); stroke-width: 6.5; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 100; stroke-dashoffset: 100; animation: ok-write 0.8s cubic-bezier(.5, .1, .3, 1) 0.15s forwards; }
+.ok-berry { transform-box: fill-box; transform-origin: 30% 70%; transform: scale(0); animation: ok-pop 0.45s cubic-bezier(.3, 1.6, .5, 1) 0.9s forwards; }
+.ok-fruit { fill: var(--berry); stroke: var(--berry-dark); stroke-width: 1.2; }
+.ok-shine { fill: #fff; opacity: 0.85; }
+.ok-leaf { fill: var(--paper); stroke: var(--leaf-ink); stroke-width: 1.4; stroke-linejoin: round; }
+.ok-rib { fill: none; stroke: var(--leaf-ink); stroke-width: 0.9; }
+@keyframes ok-write { to { stroke-dashoffset: 0; } }
+@keyframes ok-pop { to { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .ok-stroke, .ok-berry { animation-duration: 0.01s; animation-delay: 0s; } }
+
 .from { text-align: center; font-size: 11.1cqw; line-height: 1.1; }
 
 #lang { margin-top: 14px; text-align: center; }

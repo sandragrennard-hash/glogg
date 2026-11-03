@@ -41,6 +41,16 @@ const state = { name: guess, answer: '', door: '', busy: false, msg: '', view: '
 
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const tick = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 21 C11 24 14 28 16 32 C21 21 27 12 35 5"/></svg>';
+// The "you're coming" mark on the yes side: a tick that writes itself, then a lingonberry on its tip.
+const okMark = `<svg class="okmark" viewBox="0 0 140 110" role="img" aria-label="✓">
+  <path class="ok-stroke" pathLength="100" d="M12 62 C19 64 27 72 35 84 C38 89 41 92 44 93 C56 64 76 37 104 20 C108 17 111 15 114 14"/>
+  <g class="ok-berry">
+    <path class="ok-leaf" d="M117 13 C121 3 131 0 136 2 C134 9 126 15 117 13 Z"/>
+    <path class="ok-rib" d="M118 12 C123 8 128 5 133 3"/>
+    <circle class="ok-fruit" cx="118" cy="20" r="8.5"/>
+    <circle class="ok-shine" cx="115" cy="17" r="2.2"/>
+  </g>
+</svg>`;
 
 function render() {
   const app = document.getElementById('app');
@@ -50,6 +60,7 @@ function render() {
   if (state.view === 'yes') {
     app.innerHTML = `${top}
       <div class="body hand">
+        ${okMark}
         <p>${t.glad}</p>
         <p class="when fit">${t.when}</p>
         <dl>
