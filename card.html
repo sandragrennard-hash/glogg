@@ -23,6 +23,7 @@
   .msg .when { margin-top: 30px; }
   .fit { white-space: nowrap; }
   .nw { white-space: nowrap; }
+  .msg .welcome { font-size: 84px; }
   .msg .osa { margin-top: 30px; font-size: 84px; color: var(--berry-ink); }
 </style>
 </head>
@@ -48,7 +49,7 @@
   card.innerHTML = frame +
     `<div class="top"><div class="line hand fit">${t.to}</div>
        <div class="post">${Lingon.stamp(112, 132, 'SVERIGE')}</div></div>
-     <div class="msg hand"><div>${t.msg}</div><div class="when fit">${t.when}</div><div class="osa">${t.osa}</div></div>
+     <div class="msg hand"><div class="welcome">${t.msg}</div><div class="when fit">${t.when}</div><div class="osa">${t.osa}</div></div>
      <div class="line hand from">${t.from}</div>`;
   // Keep everything inside the frame's reach, with some air.
   const depth = Number(card.querySelector('.lingon').dataset.depth);
