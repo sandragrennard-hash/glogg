@@ -16,12 +16,13 @@
   .post { display: flex; align-items: flex-start; flex: none; }
   .post .postmark { width: 230px; height: 121px; margin: 58px -46px 0 0; transform: rotate(-9deg); position: relative; z-index: 1; }
   .post .stamp { width: 150px; height: 178px; }
-  .line { font-size: 90px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+  .line { font-size: 100px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
   .top .line { flex: 1; }
   .from { text-align: center; border-bottom: 0; }
-  .msg { font-size: 92px; line-height: 1.2; margin: auto 0; }
+  .msg { font-size: 100px; line-height: 1.2; margin: auto 0; }
   .msg .when { margin-top: 30px; }
-  .msg .osa { margin-top: 34px; font-size: 68px; color: var(--berry-ink); }
+  .nw { white-space: nowrap; }
+  .msg .osa { margin-top: 34px; font-size: 80px; color: var(--berry-ink); }
 </style>
 </head>
 <body>
@@ -29,7 +30,7 @@
 <script src="lingon.js"></script>
 <script>
   const T = {
-    sv: { to: 'Till: dig ♡', msg: 'Välkommen på glögg-AW!', when: 'Fredag 27 nov 18.00',
+    sv: { to: 'Till: dig ♡', msg: 'Välkommen på <span class="nw">glögg-AW!</span>', when: 'Fredag 27 nov 18.00',
           osa: 'OSA senast 20 nov - svara via länken', from: 'Sandra ♡' },
     en: { to: 'To: you ♡', msg: 'Welcome to glögg after work!', when: 'Friday 27 Nov 6 pm',
           osa: 'RSVP by 20 Nov - reply via the link', from: 'Sandra ♡' },
