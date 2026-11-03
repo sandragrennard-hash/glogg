@@ -91,6 +91,8 @@ function drawFrame() {
   const svg = box.firstChild;
   svg.dataset.size = `${w}x${h}`;
   if (old) old.replaceWith(svg); else sheet.prepend(svg);
+  const inset = `${Number(svg.dataset.depth) + 12}px`;
+  if (sheet.style.getPropertyValue('--inset') !== inset) sheet.style.setProperty('--inset', inset);
 }
 
 async function call(params) {

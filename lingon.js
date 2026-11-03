@@ -6,6 +6,9 @@
     return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 100000) / 100000; };
   }
   const f = (n) => Math.round(n * 10) / 10;
+  // Every point drawn while making a frame, to measure how far the frame reaches into the box.
+  let marks = null;
+  const mark = (x, y, r = 0) => { if (marks) marks.push([x, y, r]); };
 
   function leaf(x, y, ang, len) {
     const dx = Math.cos(ang), dy = Math.sin(ang), nx = -dy, ny = dx, w = len * 0.42;
@@ -15,6 +18,7 @@
     const a2 = [x + dx * len * 0.95 + nx * w * 0.9, y + dy * len * 0.95 + ny * w * 0.9];
     const b1 = [x + dx * len * 0.95 - nx * w * 0.9, y + dy * len * 0.95 - ny * w * 0.9];
     const b2 = [x + dx * len * 0.25 - nx * w, y + dy * len * 0.25 - ny * w];
+    [a1, a2, b1, b2, [tx, ty]].forEach(([px, py]) => mark(px, py, 1));
     return `<path class="leaf" d="M${f(x)} ${f(y)}C${f(a1[0])} ${f(a1[1])} ${f(a2[0])} ${f(a2[1])} ${f(tx)} ${f(ty)}` +
       `C${f(b1[0])} ${f(b1[1])} ${f(b2[0])} ${f(b2[1])} ${f(x)} ${f(y)}Z"/>` +
       `<path class="rib" d="M${f(x + dx * 2)} ${f(y + dy * 2)}L${f(x + dx * len * 0.75)} ${f(y + dy * len * 0.75)}"/>`;
@@ -26,6 +30,7 @@
       const a = ang + (i - (n - 1) / 2) * 0.62 + (r() - 0.5) * 0.3;
       const d = size * (1.5 + r() * 0.9);
       const bx = x + Math.cos(a) * d, by = y + Math.sin(a) * d, br = size * (0.8 + r() * 0.35);
+      mark(bx, by, br + 1);
       out += `<path class="stem" d="M${f(x)} ${f(y)}L${f(bx)} ${f(by)}"/>` +
         `<circle class="berry" cx="${f(bx)}" cy="${f(by)}" r="${f(br)}"/>` +
         `<circle class="shine" cx="${f(bx - br * 0.35)}" cy="${f(by - br * 0.38)}" r="${f(br * 0.24)}"/>`;
@@ -40,6 +45,7 @@
       const t = i / steps, off = bow * Math.sin(Math.PI * t * 0.9) + Math.sin(t * 9 + len) * 1.2;
       pts.push([x + dir[0] * len * t + n[0] * off, y + dir[1] * len * t + n[1] * off]);
     }
+    pts.forEach(([px, py]) => mark(px, py, 1));
     let out = `<path class="stem" d="M${pts.map(p => f(p[0]) + ' ' + f(p[1])).join('L')}"/>`;
     const gap = opts.gap ?? 15, lsize = opts.leaf ?? 12;
     let side = r() < 0.5 ? 1 : -1;
@@ -56,17 +62,20 @@
     out += berries(r, end[0], end[1], (ea + inward) / 2 + (Math.abs(ea - inward) > Math.PI ? Math.PI : 0), opts.berries ?? 3, opts.berry ?? 4.4);
     if (opts.twig) {
       const i = Math.round(steps * (0.4 + r() * 0.2)), p = pts[i], q = pts[i + 1];
-      const ta = Math.atan2(q[1] - p[1], q[0] - p[0]) + (r() < 0.5 ? 0.55 : -0.55);
+      // twigs lean only a little inwards, so the frame stays a narrow band along the edge
+      const ta = Math.atan2(q[1] - p[1], q[0] - p[0]) + (r() < 0.5 ? 0.3 : -0.3);
       const td = [Math.cos(ta), Math.sin(ta)];
-      out += sprig(r, p[0], p[1], td, n, len * (0.18 + r() * 0.08), { bow: 2, gap: 11, leaf: lsize * 0.8, berries: 2, berry: (opts.berry ?? 4.4) * 0.9 });
+      out += sprig(r, p[0], p[1], td, n, Math.min(len * 0.2, (opts.leaf ?? 12) * 4), { bow: 2, gap: 11, leaf: lsize * 0.8, berries: 2, berry: (opts.berry ?? 4.4) * 0.9 });
     }
     return out;
   }
 
-  // Frame for a w×h box. m = distance of the stems from the edge.
+  // Frame for a w×h box. m = distance of the stems from the edge. The svg's data-depth is how far
+  // the drawing reaches in from the nearest edge: keep text at least that far in.
   function frame(w, h, opts = {}) {
+    marks = [];
     const r = rng(opts.seed || 1127), m = opts.margin ?? 24, s = opts.scale ?? 1;
-    const o = { leaf: 15 * s, gap: 11 * s, berry: 4.4 * s, bow: 8 * s };
+    const o = { leaf: 15 * s, gap: 11 * s, berry: 4.4 * s, bow: 4 * s };
     const reach = (edge) => Math.min(opts.maxReach ?? 1e9, Math.max(40, (edge - 2 * m) * (opts.reach ?? 0.4)));
     const corners = [
       [m, m, [1, 0], [0, 1], [0, 1], [1, 0]],
@@ -82,11 +91,13 @@
       const ia = Math.atan2(hn[1] + vn[1], hn[0] + vn[0]);
       out += leaf(x, y, ia + 0.9, o.leaf * 1.1) + leaf(x, y, ia - 0.9, o.leaf * 1.1);
       out += berries(r, x, y, ia, 4, o.berry * 1.05);
-      // and a short bushy sprig growing diagonally into the card
+      // and a short bushy sprig growing diagonally into the corner
       const dd = [Math.cos(ia), Math.sin(ia)];
-      out += sprig(r, x, y, dd, [-dd[1], dd[0]], 46 * s, { ...o, bow: 4 * s, gap: 9 * s, leaf: o.leaf * 0.9, berries: 3 });
+      out += sprig(r, x, y, dd, [-dd[1], dd[0]], 32 * s, { ...o, bow: 4 * s, gap: 9 * s, leaf: o.leaf * 0.9, berries: 3 });
     }
-    return `<svg class="lingon" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true">${out}</svg>`;
+    const depth = Math.ceil(Math.max(...marks.map(([x, y, rr]) => Math.min(x, y, w - x, h - y) + rr)));
+    marks = null;
+    return `<svg class="lingon" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" data-depth="${depth}" aria-hidden="true">${out}</svg>`;
   }
 
   // Stamp with a little glögg mug, w×h, perforated edge.
