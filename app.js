@@ -3,13 +3,13 @@
 // keeps answers in this browser only (for trying the page out locally).
 const API = '';
 
-const EVENT = { start: '20261127T170000', end: '20261127T210000' };
+const EVENT = { start: '20261127T180000', end: '20261127T220000' };
 const T = {
   sv: {
     label: 'Brevkort', hi: (n) => n ? `Hej ${n}!` : 'Hej!',
     msg: 'Välkommen på glögg efter jobbet, fredagen före första advent. Det blir varm glögg, pepparkakor och levande ljus i mörkret – det vore så roligt om du kom!',
     sign: 'Kram, Sandra',
-    rows: [['Datum', 'fredag 27 november'], ['Tid', 'från 17.00'], ['Plats', 'Hagagatan 50A, Stockholm'], ['OSA', 'senast fredag 20 november']],
+    rows: [['Datum', 'fredag 27 november'], ['Tid', 'från 18.00'], ['Plats', 'Hagagatan 50A, Stockholm'], ['OSA', 'senast fredag 20 november']],
     yes: 'Ja, jag kommer!', no: 'Nej, jag kan tyvärr inte',
     saidYes: 'Vad roligt! Vi ses den 27:e. Portkoden får du på dagen.', saidNo: 'Tråkigt! Tack för att du svarade.',
     change: 'Du kan ändra ditt svar när du vill.',
@@ -23,7 +23,7 @@ const T = {
     label: 'Postcard', hi: (n) => n ? `Hi ${n}!` : 'Hi!',
     msg: 'You’re invited to glögg (Swedish mulled wine) after work, on the Friday before the first of Advent. There’ll be warm glögg, gingerbread and candlelight in the dark – I’d love for you to come!',
     sign: 'Love, Sandra',
-    rows: [['Date', 'Friday 27 November'], ['Time', 'from 5 pm'], ['Place', 'Hagagatan 50A, Stockholm'], ['RSVP', 'by Friday 20 November']],
+    rows: [['Date', 'Friday 27 November'], ['Time', 'from 6 pm'], ['Place', 'Hagagatan 50A, Stockholm'], ['RSVP', 'by Friday 20 November']],
     yes: 'Yes, I’m coming!', no: 'Sorry, I can’t make it',
     saidYes: 'How lovely! See you on the 27th. You’ll get the door code on the day.', saidNo: 'What a shame! Thanks for letting me know.',
     change: 'You can change your answer any time.',
