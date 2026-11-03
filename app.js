@@ -83,7 +83,7 @@ function render() {
 
 function drawFrame() {
   const sheet = document.getElementById('sheet');
-  const w = sheet.clientWidth, h = sheet.clientHeight, small = w < 600;
+  const w = sheet.clientWidth, h = sheet.clientHeight, small = w < 760;
   const old = sheet.querySelector(':scope > .lingon');
   if (old && old.dataset.size === `${w}x${h}`) return;
   const box = document.createElement('div');
