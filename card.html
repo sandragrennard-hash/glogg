@@ -16,13 +16,14 @@
   .post { display: flex; align-items: flex-start; flex: none; }
   .post .postmark { width: 230px; height: 121px; margin: 58px -46px 0 0; transform: rotate(-9deg); position: relative; z-index: 1; }
   .post .stamp { width: 150px; height: 178px; }
-  .line { font-size: 100px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+  .line { font-size: 120px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
   .top .line { flex: 1; }
   .from { text-align: center; border-bottom: 0; }
-  .msg { font-size: 100px; line-height: 1.2; margin: auto 0; }
+  .msg { font-size: 118px; line-height: 1.12; margin: auto 0; }
   .msg .when { margin-top: 30px; }
+  .fit { white-space: nowrap; }
   .nw { white-space: nowrap; }
-  .msg .osa { margin-top: 34px; font-size: 80px; color: var(--berry-ink); }
+  .msg .osa { margin-top: 30px; font-size: 96px; color: var(--berry-ink); }
 </style>
 </head>
 <body>
@@ -45,15 +46,24 @@
   const card = document.getElementById('card');
   const frame = Lingon.frame(W, H, { margin: 40, scale: 2, reach: 0.36 });
   card.innerHTML = frame +
-    `<div class="top"><div class="line hand">${t.to}</div>
-       <div class="post">${Lingon.postmark('STOCKHOLM · 27 NOV 2026 · ', '★')}${Lingon.stamp(112, 132, 'SVERIGE')}</div></div>
-     <div class="msg hand"><div>${t.msg}</div><div class="when">${t.when}</div><div class="osa">${t.osa}</div></div>
+    `<div class="top"><div class="line hand fit">${t.to}</div>
+       <div class="post">${Lingon.stamp(112, 132, 'SVERIGE')}</div></div>
+     <div class="msg hand"><div>${t.msg}</div><div class="when fit">${t.when}</div><div class="osa">${t.osa}</div></div>
      <div class="line hand from">${t.from}</div>`;
   // Keep everything inside the frame's reach, with some air.
   const depth = Number(card.querySelector('.lingon').dataset.depth);
   card.style.padding = `${depth + 24}px ${depth + 30}px ${depth + 36}px`;
   window.frameDepth = depth;
-  document.fonts.ready.then(() => { window.cardReady = true; });
+  document.fonts.ready.then(() => {
+    // One row each: shrink a line that doesn't fit (a long name) rather than wrap it.
+    card.querySelectorAll('.fit').forEach(e => {
+      let size = parseFloat(getComputedStyle(e).fontSize);
+      while (e.scrollWidth > e.clientWidth + 1 && size > 40) e.style.fontSize = `${size -= 2}px`;
+    });
+    // Report text that would run past the padding (a name too long, a line too big).
+    window.overflow = card.scrollHeight > card.clientHeight || [...card.querySelectorAll(".line, .msg div")].some(e => e.scrollWidth > e.clientWidth + 1);
+    window.cardReady = true;
+  });
 </script>
 </body>
 </html>
