@@ -1,7 +1,7 @@
 // The personal reply page. The link is …/glogg/?g=<name>-<code> (Swedish) or …/glogg/en/?g=… (English).
 // Names and answers live in the Google Sheet; API is its Apps Script web app. Without API the page
 // keeps answers in this browser only (for trying the page out locally).
-const API = '';
+const API = 'https://script.google.com/macros/s/AKfycbzq9BSsHxZs75XvONxqytS1da_rezUmx9V-U6BnQAuQjEaupzPpaZvo91zQ26lNmsfk/exec';
 
 const EVENT = { start: '20261127T180000', end: '20261127T220000' };
 const T = {
