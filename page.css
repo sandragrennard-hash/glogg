@@ -34,9 +34,10 @@ body { min-height: 100svh; background: #efebe3; display: flex; flex-direction: c
 .rsvp svg { position: absolute; left: -0.6cqw; top: -1.8cqw; width: 7.6cqw; height: 7.6cqw; overflow: visible; }
 .rsvp path { fill: none; stroke: var(--berry); stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 48; stroke-dashoffset: 48; }
 .rsvp.on path { stroke-dashoffset: 0; transition: stroke-dashoffset 0.45s ease-out; }
-.said { min-height: 1.2em; margin-top: 3cqw !important; font-size: 6cqw; color: var(--berry-ink); }
+.said:empty { display: none; }
+.said { margin-top: 3cqw !important; font-size: 6cqw; color: var(--berry-ink); }
 
-dl { margin: 6cqw 0 0; }
+dl { margin: 0; }
 dl div { padding: 2.2cqw 0 1.6cqw; border-bottom: 1px solid var(--rule); }
 dt { font-size: 2.9cqw; margin-bottom: 0.8cqw; }
 dd { margin: 0; font-size: 7.4cqw; line-height: 1.2; }
@@ -46,6 +47,7 @@ dd .small { display: block; }
 .small:hover { text-decoration: underline; }
 .rsvp.cal { justify-content: center; margin-top: 6cqw; }
 .change { margin-top: 4cqw; color: var(--print); }
+.more { margin-top: 3cqw; font-size: 3.4cqw; }
 
 /* The tick on the yes side: written in ink over 0.8 s, then the berry pops onto its tip. */
 .okmark { display: block; width: 30cqw; height: auto; margin: 0 auto 3cqw; overflow: visible; }

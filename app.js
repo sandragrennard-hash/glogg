@@ -12,7 +12,7 @@ const T = {
     to: 'Till', you: 'dig ♡', msg: 'Välkommen på <span class="nw">glögg-AW!</span>', when: 'Fredag 27 nov 18.00',
     osa: 'OSA senast 20 nov', yes: 'Ja, jag kommer!', no: 'Nej, tyvärr',
     saidNo: 'Tråkigt! Tack för att du svarade.',
-    glad: 'Vad roligt att du kommer!', address: 'Adress', door: 'Portkod', map: 'Visa på karta',
+    more: 'Adress och portkod', address: 'Adress', door: 'Portkod', map: 'Visa på karta',
     cal: 'Lägg till i kalendern', calTitle: 'Glögg-AW hos Sandra', change: 'Ändra svar',
     error: 'Det gick inte att spara. Försök igen om en stund.',
     unknown: 'Den här länken känns inte igen. Använd länken du fick av Sandra.',
@@ -22,7 +22,7 @@ const T = {
     to: 'To', you: 'you ♡', msg: 'Welcome to glögg after work!', when: 'Friday 27 Nov 6 pm',
     osa: 'RSVP by 20 Nov', yes: 'Yes, I’m coming!', no: 'Sorry, I can’t',
     saidNo: 'What a shame! Thanks for letting me know.',
-    glad: 'So glad you’re coming!', address: 'Address', door: 'Door code', map: 'Show on map',
+    more: 'Address and door code', address: 'Address', door: 'Door code', map: 'Show on map',
     cal: 'Add to calendar', calTitle: 'Glögg after work at Sandra’s', change: 'Change answer',
     error: 'Couldn’t save that. Please try again in a moment.',
     unknown: 'This link isn’t recognised. Please use the link Sandra sent you.',
@@ -36,8 +36,9 @@ const slug = new URLSearchParams(location.search).get('g') || (location.pathname
 const code = slug.split('-').pop().toLowerCase();
 // First paint uses the name in the link; the sheet's spelling (å, ä, ö) replaces it when it arrives.
 const guess = slug.includes('-') ? slug.slice(0, slug.lastIndexOf('-')).split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('-') : '';
-// view: 'card' (the invite with the buttons) or 'yes' (address and door code).
-const state = { name: guess, answer: '', door: '', busy: false, msg: '', view: 'card', loaded: false };
+// view: 'card' (the invite with the buttons) or 'yes' (address and door code); fresh: the guest has
+// just tapped "Ja", so the yes side opens with the tick being written.
+const state = { name: guess, answer: '', door: '', busy: false, msg: '', view: 'card', fresh: false };
 
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const tick = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 21 C11 24 14 28 16 32 C21 21 27 12 35 5"/></svg>';
@@ -60,9 +61,7 @@ function render() {
   if (state.view === 'yes') {
     app.innerHTML = `${top}
       <div class="body hand">
-        ${okMark}
-        <p>${t.glad}</p>
-        <p class="when fit">${t.when}</p>
+        ${state.fresh ? okMark : ''}
         <dl>
           <div><dt class="printed">${t.address}</dt><dd>${EVENT.address}
             <a class="small" href="https://maps.google.com/?q=${encodeURIComponent(EVENT.address)}" target="_blank" rel="noopener">${t.map} ▸</a></dd></div>
@@ -81,7 +80,8 @@ function render() {
           ${['yes', 'no'].map(a => `<button class="rsvp${state.answer === a ? ' on' : ''}" role="radio" aria-checked="${state.answer === a}"
             data-a="${a}" ${state.busy ? 'disabled' : ''}><span class="box">${tick}</span>${t[a]}</button>`).join('')}
         </div>
-        <p class="said" aria-live="polite">${state.msg || (state.answer === 'no' ? t.saidNo : '')}</p>`
+        <p class="said" aria-live="polite">${state.msg || (state.answer === 'no' ? t.saidNo : '')}</p>
+        ${state.answer === 'yes' && !state.busy ? `<a class="small more" href="#" id="more">${t.more} ▸</a>` : ''}`
         : `<p class="said">${t.unknown}</p>`}
       </div>${from}`;
   }
@@ -91,6 +91,8 @@ function render() {
   app.querySelectorAll('.rsvp[data-a]').forEach(b => b.onclick = () => answer(b.dataset.a));
   const cal = document.getElementById('cal');
   if (cal) cal.onclick = calendar;
+  const more = document.getElementById('more');
+  if (more) more.onclick = (e) => { e.preventDefault(); state.fresh = false; show('yes'); };
   const change = document.getElementById('change');
   if (change) change.onclick = (e) => { e.preventDefault(); show('card'); };
   document.getElementById('other').onclick = (e) => {
@@ -149,14 +151,14 @@ function apply(d) {
 
 async function answer(a) {
   if (state.busy) return;
-  if (a === state.answer) { if (a === 'yes') show('yes'); return; }
+  if (a === state.answer) { if (a === 'yes') { state.fresh = true; show('yes'); } return; }
   const before = state.answer;
   Object.assign(state, { answer: a, busy: true, msg: '' });
   render();
   try {
     apply(await call({ r: a }));
     state.busy = false;
-    if (state.answer === 'yes') { show('yes'); return; }
+    if (state.answer === 'yes') { state.fresh = true; show('yes'); return; }
   } catch { state.answer = before; state.msg = t.error; }
   state.busy = false;
   render();
@@ -179,5 +181,4 @@ document.body.append(nav);
 render();
 new ResizeObserver(() => { fit(); drawFrame(); }).observe(document.getElementById('sheet'));
 document.fonts.ready.then(() => { fit(); drawFrame(); });
-// Someone who has already said yes lands on the address side.
-if (slug) call({}).then(d => { apply(d); if (state.answer === 'yes') state.view = 'yes'; render(); }).catch(() => {});
+if (slug) call({}).then(d => { apply(d); render(); }).catch(() => {});
