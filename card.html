@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Glöggkort</title>
+<!-- The card shown as the WhatsApp preview. tools/render makes card-sv.png and card-en.png from it. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=IM+Fell+English+SC&display=block" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: var(--paper); }
+  .card { position: relative; width: 1200px; height: 630px; }
+  .card .lingon { position: absolute; inset: 0; }
+  .label { position: absolute; top: 62px; left: 0; right: 0; text-align: center; font-size: 22px; }
+  .divider { position: absolute; left: 640px; top: 118px; height: 400px; }
+  .msg { position: absolute; left: 104px; top: 128px; width: 500px; font-size: 40px; line-height: 1.22; }
+  .msg .hi { font-size: 58px; margin-bottom: 6px; }
+  .msg .when { margin-top: 18px; color: var(--berry-ink); }
+  .msg .sign { margin-top: 18px; }
+  .card .stamp { position: absolute; left: 984px; top: 90px; width: 112px; height: 132px; }
+  .card .postmark { position: absolute; left: 832px; top: 146px; width: 190px; height: 100px; transform: rotate(-9deg); }
+  .addr { position: absolute; left: 696px; top: 300px; width: 420px; }
+  .addr .line { height: 64px; font-size: 38px; }
+  .addr .line.small { font-size: 32px; color: var(--berry-ink); }
+</style>
+</head>
+<body>
+<div class="card" id="card"></div>
+<script src="lingon.js"></script>
+<script>
+  const T = {
+    sv: { label: 'Brevkort', hi: 'Hej!', msg: 'Välkommen på glögg efter jobbet, fredagen före första advent.',
+          when: 'Fredag 27 november', sign: 'Kram, Sandra', to: 'Till: dig ♡', osa: 'OSA senast 20 november', tap: 'tryck på kortet för att svara', stamp: 'SVERIGE' },
+    en: { label: 'Postcard', hi: 'Hi!', msg: 'Come for glögg after work, the Friday before the first of Advent.',
+          when: 'Friday 27 November', sign: 'Love, Sandra', to: 'To: you ♡', osa: 'RSVP by 20 November', tap: 'tap the card to reply', stamp: 'SVERIGE' },
+  };
+  const lang = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'sv';
+  const t = T[lang];
+  document.documentElement.lang = lang;
+  document.getElementById('card').innerHTML =
+    Lingon.frame(1200, 630, { margin: 30, scale: 1.25, reach: 0.38 }) +
+    `<div class="label printed">${t.label}</div>
+     <div class="divider rule-v"></div>
+     <div class="msg hand"><div class="hi">${t.hi}</div><div>${t.msg}</div><div class="when">${t.when}</div><div class="sign">${t.sign}</div></div>
+     ${Lingon.stamp(112, 132, t.stamp)}
+     ${Lingon.postmark('STOCKHOLM · 27 NOV 2026 · ', '★')}
+     <div class="addr hand"><div class="line rule">${t.to}</div><div class="line rule small">${t.osa}</div><div class="line rule small">${t.tap}</div></div>`;
+  document.fonts.ready.then(() => { window.cardReady = true; });
+</script>
+</body>
+</html>
