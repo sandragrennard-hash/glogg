@@ -6,11 +6,11 @@
 // door code only to guests who have said yes. Without API the page keeps answers in this browser.
 const API = 'https://script.google.com/macros/s/AKfycbzq9BSsHxZs75XvONxqytS1da_rezUmx9V-U6BnQAuQjEaupzPpaZvo91zQ26lNmsfk/exec';
 
-const EVENT = { start: '20261127T180000', end: '20261127T220000', address: 'Hagagatan 50A, Stockholm' };
+const EVENT = { start: '20261210T180000', end: '20261210T220000', address: 'Hagagatan 50A, Stockholm' };
 const T = {
   sv: {
-    to: 'Till', you: 'dig ♡', msg: 'Välkommen på <span class="nw">glögg-AW!</span>', when: 'Fredag 27 nov 18.00',
-    osa: 'OSA senast 20 nov', yes: 'Ja, jag kommer!', no: 'Nej, tyvärr',
+    to: 'Till', you: 'dig ♡', msg: 'Välkommen på <span class="nw">glögg-AW!</span>', when: 'Torsdag 10 dec 18.00',
+    osa: 'OSA senast 3 dec', yes: 'Ja, jag kommer!', no: 'Nej, tyvärr',
     saidNo: 'Tråkigt! Tack för att du svarade.',
     more: 'Adress och portkod', address: 'Adress', door: 'Portkod', map: 'Visa på karta',
     cal: 'Lägg till i kalendern', calTitle: 'Glögg-AW hos Sandra', change: 'Ändra svar',
@@ -19,8 +19,8 @@ const T = {
     other: 'In English',
   },
   en: {
-    to: 'To', you: 'you ♡', msg: 'Welcome to glögg after work!', when: 'Friday 27 Nov 6 pm',
-    osa: 'RSVP by 20 Nov', yes: 'Yes, I’m coming!', no: 'Sorry, I can’t',
+    to: 'To', you: 'you ♡', msg: 'Welcome to glögg after work!', when: 'Thursday 10 Dec 6 pm',
+    osa: 'RSVP by 3 Dec', yes: 'Yes, I’m coming!', no: 'Sorry, I can’t',
     saidNo: 'What a shame! Thanks for letting me know.',
     more: 'Address and door code', address: 'Address', door: 'Door code', map: 'Show on map',
     cal: 'Add to calendar', calTitle: 'Glögg after work at Sandra’s', change: 'Change answer',
